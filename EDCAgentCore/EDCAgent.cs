@@ -205,64 +205,64 @@ namespace EDCAgentCore
                                 logger.InfoText(string.Format("Sync version: {1}", clientIP, cmd_tokens[1]));
                                 break;
                             case kSyncEmpCmd:
-                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync Employee List", cmd_tokens[2], clientIP));
+                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync Employee List", cmd_tokens[1], clientIP));
                                 send_str = getEmployeeList(cmd_tokens);
                                 send_buf = encoder.GetBytes(send_str);
                                 clientStream.Write(send_buf, 0, send_buf.Length);
                                 clientStream.Flush();
-                                logger.DebugText(string.Format("Send Employee list to Client EDC{0}({1}) OK", cmd_tokens[2], clientIP));
+                                logger.DebugText(string.Format("Send Employee list to Client EDC{0}({1}) OK", cmd_tokens[1], clientIP));
                                 break;
                             case kSyncEDCCmd:
-                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync EDC List", cmd_tokens[2], clientIP));
+                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync EDC List", cmd_tokens[1], clientIP));
                                 send_str = getEDCList(cmd_tokens);
                                 send_buf = encoder.GetBytes(send_str);
                                 clientStream.Write(send_buf, 0, send_buf.Length);
                                 clientStream.Flush();
-                                logger.DebugText(string.Format("Send EDC list to Client EDC{0}({1}) OK", cmd_tokens[2], clientIP));
+                                logger.DebugText(string.Format("Send EDC list to Client EDC{0}({1}) OK", cmd_tokens[1], clientIP));
                                 break;
                             case kSyncProjCmd:
-                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync Project List", cmd_tokens[2], clientIP));
+                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync Project List", cmd_tokens[1], clientIP));
                                 send_str = getProjectList(cmd_tokens);
                                 send_buf = encoder.GetBytes(send_str);
                                 clientStream.Write(send_buf, 0, send_buf.Length);
                                 clientStream.Flush();
-                                logger.DebugText(string.Format("Send Project list to Client EDC{0}({1}) OK", cmd_tokens[2], clientIP));
+                                logger.DebugText(string.Format("Send Project list to Client EDC{0}({1}) OK", cmd_tokens[1], clientIP));
                                 break;
                             case kSyncLogCmd:
-                                logger.InfoText(string.Format("Client EDC{0}({1}) sync EDC Log", cmd_tokens[2], clientIP));
+                                logger.InfoText(string.Format("Client EDC{0}({1}) sync EDC Log", cmd_tokens[1], clientIP));
                                 syncEDCLog(command, clientStream);
-                                logger.DebugText(string.Format("Sync EDCLog from Client EDC{0}({1}) OK", cmd_tokens[2], clientIP));
+                                logger.DebugText(string.Format("Sync EDCLog from Client EDC{0}({1}) OK", cmd_tokens[1], clientIP));
                                 break;
                             case kSyncEmpDeltaCmd:
-                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync Employee Delta", cmd_tokens[2], clientIP));
+                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync Employee Delta", cmd_tokens[1], clientIP));
                                 send_str = getEmployeeDelta(cmd_tokens);
                                 send_buf = encoder.GetBytes(send_str);
                                 //TODO write error check
                                 clientStream.Write(send_buf, 0, send_buf.Length);
                                 clientStream.Flush();
-                                logger.DebugText(string.Format("Send Employee delta to Client EDC{0}({1}) OK", cmd_tokens[2], clientIP));
+                                logger.DebugText(string.Format("Send Employee delta to Client EDC{0}({1}) OK", cmd_tokens[1], clientIP));
                                 break;
                             case kSyncEDCDeltaCmd:
-                                logger.WarnText(string.Format("Client EDC{0}({1}) require to sync EDC Delta, but this isn't implement", cmd_tokens[2], clientIP));
+                                logger.WarnText(string.Format("Client EDC{0}({1}) require to sync EDC Delta, but this isn't implement", cmd_tokens[1], clientIP));
                                 break;
                             case kSyncProjDeltaCmd:
-                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync Project Delta", cmd_tokens[2], clientIP));
+                                logger.InfoText(string.Format("Client EDC{0}({1}) require to sync Project Delta", cmd_tokens[1], clientIP));
                                 send_str = getProjectDelta(cmd_tokens);
                                 send_buf = encoder.GetBytes(send_str);
                                 clientStream.Write(send_buf, 0, send_buf.Length);
                                 clientStream.Flush();
-                                logger.DebugText(string.Format("Send Project delta to Client EDC{0}({1}) OK", cmd_tokens[2], clientIP));
+                                logger.DebugText(string.Format("Send Project delta to Client EDC{0}({1}) OK", cmd_tokens[1], clientIP));
                                 break;
                             case kSyncEmpDeltaOkCmd:
-                                logger.InfoText(string.Format("Client EDC{0}({1}) response sync Employee Delta OK", cmd_tokens[2], clientIP));
+                                logger.InfoText(string.Format("Client EDC{0}({1}) response sync Employee Delta OK", cmd_tokens[1], clientIP));
                                 handleEmployeeDeltaOk(cmd_tokens);
                                 break;
                             case kSyncEDCDeltaOkCmd:
-                                logger.InfoText(string.Format("Client EDC{0}({1}) response sync EDC Delta OK", cmd_tokens[2], clientIP));
+                                logger.InfoText(string.Format("Client EDC{0}({1}) response sync EDC Delta OK", cmd_tokens[1], clientIP));
                                 handleEDCDeltaOk(cmd_tokens);
                                 break;
                             case kSyncProjDeltaOkCmd:
-                                logger.InfoText(string.Format("Client EDC{0}({1}) response sync Project Delta OK", cmd_tokens[2], clientIP));
+                                logger.InfoText(string.Format("Client EDC{0}({1}) response sync Project Delta OK", cmd_tokens[1], clientIP));
                                 handleProjectDeltaOk(cmd_tokens);
                                 break;
                             default:
@@ -663,15 +663,16 @@ namespace EDCAgentCore
                 //Start from 2nd line
                 for (int i = 1; i < recv_list.Length; i++)
                 {
-                    if (recv_list[i].Trim().Length != 0)
+                    string curr_log = recv_list[i].Trim();
+                    if (curr_log.Length != 0)
                     {
-                        EDCLog edc_log = parseEDCLog(recv_list[i].Trim());
+                        EDCLog edc_log = parseEDCLog(curr_log);
                         //TODO, please note here should change to EDCLogArchive
                         using (SqlCommand sql_insert_log = new SqlCommand("INSERT INTO [dbo].[EDCLogTmp] (EDCLog) VALUES (@edc_log)", sql_conn))
                         {
                             sql_insert_log.CommandTimeout = 0;
                             sql_insert_log.Parameters.Add(kFieldEDCLog, SqlDbType.NVarChar);
-                            sql_insert_log.Parameters[kFieldEDCLog].Value = recv_list[i].Trim();
+                            sql_insert_log.Parameters[kFieldEDCLog].Value = curr_log;
                             sql_insert_log.CommandType = System.Data.CommandType.Text;
                             if (sql_insert_log.ExecuteNonQuery() != 1)
                             {
@@ -679,7 +680,7 @@ namespace EDCAgentCore
                             }
                             else
                             {
-                                logger.InfoText("Client thread insert EDC_log: " + recv_list[i]);
+                                logger.InfoText("Client thread insert EDC_log: " + curr_log);
                             }
                         }
 
