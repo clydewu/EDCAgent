@@ -34,16 +34,19 @@ namespace EDCAgentService
 
             logger = new EDCLogger.EDCLogger(kModuleName, logConfFile);
             agent = new EDCAgent(logger, port, connectString);
+            logger.Info("EDCAgentService Initialized");
         }
 
         protected override void OnStart(string[] args)
         {
             agent.Start();
+            logger.Info("EDCAgent start success");
         }
 
         protected override void OnStop()
         {
             agent.Close();
+            logger.Info("EDCAgent close success");
         }
     }
 }
