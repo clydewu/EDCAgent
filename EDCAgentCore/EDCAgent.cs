@@ -240,7 +240,7 @@ namespace EDCAgentCore
                                 //TODO write error check
                                 clientStream.Write(send_buf, 0, send_buf.Length);
                                 clientStream.Flush();
-                                logger.DebugText(string.Format("Send Employee delta to Client EDC{0}({1}) OK", cmd_tokens[1], clientIP));
+                                logger.DebugText(string.Format("Send Employee delta to Client EDC{0}({1}) OK, data: {2}", cmd_tokens[1], clientIP, send_str));
                                 break;
                             case kSyncEDCDeltaCmd:
                                 logger.WarnText(string.Format("Client EDC{0}({1}) require to sync EDC Delta, but this isn't implement", cmd_tokens[1], clientIP));
