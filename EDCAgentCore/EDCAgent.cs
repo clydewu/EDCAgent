@@ -301,6 +301,37 @@ namespace EDCAgentCore
             using (SqlConnection sql_conn = new SqlConnection(this.sqlConnStr))
             {
                 sql_conn.Open();
+
+                //20150601, For debug, show what is it in DB in this moment.
+                using (SqlCommand sql_cmd = new SqlCommand(SPSyncEDCInfo, sql_conn))
+                {
+                    sql_cmd.CommandTimeout = 0;
+                    sql_cmd.CommandType = CommandType.Text;
+                    sql_cmd.CommandText = "SELECT * FROM Sync_EDC_Employee WHERE [EDCNO] == @EDC";
+                    sql_cmd.Parameters.AddWithValue("NAME", plist[1]);
+                    using (SqlDataReader sql_reader = sql_cmd.ExecuteReader())
+                    {
+                        while (sql_reader.Read())
+                        {
+                            emp_list.Append("{");
+                            emp_list.Append(sql_reader["SEQ"]);
+                            emp_list.Append(",");
+                            emp_list.Append(sql_reader["EDCNO"]);
+                            emp_list.Append(",");
+                            emp_list.Append(sql_reader["UserNumber"]);
+                            emp_list.Append(",");
+                            emp_list.Append(sql_reader["StatusType"]);
+                            emp_list.Append(",");
+                            emp_list.Append(sql_reader["SyncFlag"]);
+                            emp_list.Append(",");
+                            emp_list.Append(sql_reader["LatestDT"]);
+                            emp_list.Append("},");
+                        }
+                    }
+                    logger.Info(string.Format("Sync_EDC_Employee, EDC NO: {0}, data: {1}", plist[1], emp_list.ToString()));
+                }
+
+                emp_list.Clear();
                 using (SqlCommand sql_cmd = new SqlCommand(SPSyncEDCInfo, sql_conn))
                 {
                     sql_cmd.CommandTimeout = 0;
